@@ -1,9 +1,14 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Marc's 65th Birthday Jokes</title>
+
+<!-- Use Comic Neue for consistent Comic Sans-like look across devices -->
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+
 <style>
   body {
     background: linear-gradient(135deg, #ff9a9e, #fad0c4);
@@ -12,7 +17,7 @@
     justify-content: center;
     height: 100vh;
     overflow: hidden;
-    font-family: 'Comic Sans MS', cursive, sans-serif;
+    font-family: 'Comic Neue', cursive, sans-serif;
     margin: 0;
     padding: 0;
   }
@@ -23,23 +28,23 @@
     justify-content: center;
     text-align: center;
     padding: 0 20px;
+    position: relative;
   }
   .joke {
-    font-size: 2.5em;
+    position: absolute;
+    font-size: 6vw; /* responsive large text for TV, readable on all devices */
     max-width: 90%;
     text-align: center;
     opacity: 0;
-    animation: fadeInOut 6s infinite;
+    transition: opacity 1.5s ease;
     color: white;
     text-shadow: 2px 2px 4px black;
     word-wrap: break-word;
     overflow-wrap: break-word;
+    white-space: pre-wrap;
   }
-  @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(20px) rotate(-2deg); }
-    10% { opacity: 1; transform: translateY(0) rotate(0deg); }
-    90% { opacity: 1; transform: translateY(0) rotate(0deg); }
-    100% { opacity: 0; transform: translateY(-20px) rotate(2deg); }
+  .visible {
+    opacity: 1;
   }
 </style>
 </head>
@@ -63,32 +68,44 @@ const jokes = [
   "At 65, 'getting lucky' means finding your cell phone in your dirty laundry.",
   "What is a prize old people can win for aging? -- Atrophy.",
   "Old age makes us great multitaskers. I can sneeze and pee at the same time.",
-  "Why you should you marry someone older than you -- As your looks fade, so will their eyesight",
+  "Why should you marry someone older than you? -- As your looks fade, so will their eyesight.",
   "What’s worse than middle age? Knowing you’ll grow out of it.",
   "You know you're getting old when your doctor refers you to an archaeologist.",
   "Why was the bassoon arrested? -- He was in treble.",
-  "Marriage is like playing the bassoon --  it looks easy until you try it.",
-  "What do a bassoon and a lawsuit have in common? -- everyone is relieved when the case is closed",
-  "How do you get two bassoonists to play in tune -- shoot one.",
-  
-
-
+  "Marriage is like playing the bassoon -- it looks easy until you try it.",
+  "What do a bassoon and a lawsuit have in common? -- everyone is relieved when the case is closed.",
+  "How do you get two bassoonists to play in tune? -- shoot one.",
 ];
 
 let index = 0;
 const container = document.getElementById('jokeContainer');
 
 function showNextJoke() {
-  const jokeElement = document.createElement('div');
-  jokeElement.className = 'joke';
-  jokeElement.innerText = jokes[index];
-  container.innerHTML = '';
-  container.appendChild(jokeElement);
-  index = (index + 1) % jokes.length;
+    const jokeElement = document.createElement('div');
+    jokeElement.className = 'joke';
+    jokeElement.innerText = jokes[index];
+    container.appendChild(jokeElement);
+
+    // Fade in smoothly
+    requestAnimationFrame(() => {
+        jokeElement.classList.add('visible');
+    });
+
+    // Fade out after 6 seconds
+    setTimeout(() => {
+        jokeElement.classList.remove('visible');
+    }, 6000);
+
+    // After 7.5 seconds (6s display + 1.5s fade), remove and show next
+    setTimeout(() => {
+        container.removeChild(jokeElement);
+        index = (index + 1) % jokes.length;
+        showNextJoke();
+    }, 7500);
 }
 
+// Start the first joke
 showNextJoke();
-setInterval(showNextJoke, 8000);
 </script>
 
 </body>
