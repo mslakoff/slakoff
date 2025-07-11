@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marc's 65th Birthday Jokes</title>
+<style>
+  body {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  #jokeContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 20px;
+  }
+  .joke {
+    font-size: 2.5em;
+    max-width: 90%;
+    text-align: center;
+    opacity: 0;
+    animation: fadeInOut 6s infinite;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+  @keyframes fadeInOut {
+    0% { opacity: 0; transform: translateY(20px) rotate(-2deg); }
+    10% { opacity: 1; transform: translateY(0) rotate(0deg); }
+    90% { opacity: 1; transform: translateY(0) rotate(0deg); }
+    100% { opacity: 0; transform: translateY(-20px) rotate(2deg); }
+  }
+</style>
+</head>
+<body>
+
+<div id="jokeContainer"></div>
+
+<script>
+const jokes = [
+  "Today is Marc's birthday so don't fuck with him!",
+  "They say 65 is the new 45, but Marc says it's the appropriate amount of time to take a nap.",
+  "When you hit 65, “Rock ‘n Roll” no longer describes your music, but your chair options",
+  "You know you’re turning 65 when you start ordering drive-up food at a mailbox.",
+  "There once was a Marc who turned 65,\nHis bassoon kept the parties alive,\nWith a wheeze and a puff,\nHe'd play fancy stuff,\nAnd dance with a reed high-five!",
+  "Happy 65th, Marc! Time to replace your bassoon with a walker",
+  "Advice for 65-year-olds: use valet parking - valets don’t forget where they parked your car.",
+  "Marc's bassoon is older than his jokes",
+  "Limerick: There once was a Marc quite spry,\nWho played bassoon under the sky,\nAt 65 he would play,\nAnd shout 'Hip Hooray!',\nWhile eating his birthday pie!",
+  "At 65, “getting down” on your birthday means not necessarily getting back up.",
+  "At 65 your body is still a temple, but the steeples are pointing downward.",
+  "At 65, 'getting lucky' means finding your cell phone in your dirty laundry.",
+  "What is a prize old people can win for aging? -- Atrophy.",
+  "Old age makes us great multitaskers. I can sneeze and pee at the same time.",
+  "Why you should you marry someone older than you -- As your looks fade, so will their eyesight",
+  "What’s worse than middle age? Knowing you’ll grow out of it.",
+  "You know you're getting old when your doctor refers you to an archaeologist.",
+  "Why was the bassoon arrested? -- He was in treble.",
+  "Marriage is like playing the bassoon --  it looks easy until you try it.",
+  "What do a bassoon and a lawsuit have in common? -- everyone is relieved when the case is closed",
+  "How do you get two bassoonists to play in tune -- shoot one.",
+  
+
+
+];
+
+let index = 0;
+const container = document.getElementById('jokeContainer');
+
+function showNextJoke() {
+  const jokeElement = document.createElement('div');
+  jokeElement.className = 'joke';
+  jokeElement.innerText = jokes[index];
+  container.innerHTML = '';
+  container.appendChild(jokeElement);
+  index = (index + 1) % jokes.length;
+}
+
+showNextJoke();
+setInterval(showNextJoke, 8000);
+</script>
+
+</body>
+</html>
