@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Marc's 65th Birthday Jokes</title>
+
+<!-- Use Comic Neue for consistent Comic Sans-like look across devices -->
+<link href="https://fonts.googleapis.com/css2?family=Comic+Neue&display=swap" rel="stylesheet">
+
+<style>
+  body {
+    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'Comic Neue', cursive, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  #jokeContainer {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 20px;
+    position: relative;
+  }
+  .joke {
+    position: absolute;
+    font-size: 6vw; /* responsive large text for TV, readable on all devices */
+    max-width: 90%;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1.5s ease;
+    color: white;
+    text-shadow: 2px 2px 4px black;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+  }
+  .visible {
+    opacity: 1;
+  }
+</style>
+</head>
+<body>
+
+<div id="jokeContainer"></div>
+
+<script>
+const jokes = [
+  { type: 'text', content: "Today is Marc's birthday so don't fuck with him!" },
+  { type: 'text', content: "They say 65 is the new 45, but Marc says that 65 is the appropriate amount of minutes to take a nap." },
+  { type: 'text', content: "When you hit 65, “Rock ‘n Roll” no longer describes your music, but your chair options" },
+  { type: 'text', content: "You know you’re turning 65 when you start ordering drive-up food at a mailbox." },
+  { type: 'text', content: "There once was a Marc who turned 65,
+His bassoon kept the parties alive,
+With a wheeze and a puff,
+He'd play fancy stuff,
+And dance with a reed, high-five!" },
+  { type: 'text', content: "Happy 65th, Marc! Time to replace your bassoon with a walker" },
+  { type: 'text', content: "Advice for 65-year-olds: use valet parking - valets don’t forget where they parked your car." },
+  { type: 'text', content: "Marc's bassoon is even older than these jokes" },
+  { type: 'image', content: "bsn.png" },  // Insert image here
+  { type: 'text', content: "Limerick: There once was a Marc quite spry,
+Who played bassoon under the sky,
+At 65 he would play,
+And shout 'Hip Hooray!',
+While eating his birthday pie!" },
+  { type: 'text', content: "At 65, “getting down” on your birthday means not necessarily getting back up." },
+  { type: 'text', content: "At 65 your body is still a temple, but the steeples are pointing downward." },
+  { type: 'text', content: "At 65, 'getting lucky' means finding your cell phone in your dirty laundry." },
+  { type: 'text', content: "What is a prize old people can win for aging? -- Atrophy." },
+  { type: 'text', content: "Old age makes us great multitaskers. I can sneeze and pee at the same time." },
+  { type: 'text', content: "Why should you marry someone older than you? -- As your looks fade, so will their eyesight." },
+  { type: 'text', content: "What’s worse than middle age? Knowing you’ll grow out of it." },
+  { type: 'text', content: "You know you're getting old when your doctor refers you to an archaeologist." },
+  { type: 'text', content: "Why was the bassoon arrested? -- He was in treble." },
+  { type: 'text', content: "Marriage is like playing the bassoon -- it looks easy until you try it." },
+  { type: 'text', content: "What do a bassoon and a lawsuit have in common? -- everyone is relieved when the case is closed." },
+  { type: 'text', content: "How do you get two bassoonists to play in tune? -- shoot one." },
+  { type: 'text', content: "The sad thing about turning 65 - the candles cost more than the cake" },
+  { type: 'text', content: "You know you're getting old when you stoop to tie your shoelaces
+and wonder what else you could do while you’re down there." }
+];
+
+let index = 0;
+const container = document.getElementById('jokeContainer');
+
+function showNextJoke() {
+  const joke = jokes[index];
+  const jokeElement = document.createElement('div');
+  jokeElement.className = 'joke';
+
+  if (joke.type === 'text') {
+    jokeElement.innerText = joke.content;
+  } else if (joke.type === 'image') {
+    const img = document.createElement('img');
+    img.src = joke.content;
+    img.style.maxWidth = '80%';
+    img.style.maxHeight = '80vh';
+    img.style.border = '5px solid white';
+    img.style.boxShadow = '2px 2px 12px black';
+    jokeElement.appendChild(img);
+  }
+
+  container.appendChild(jokeElement);
+  requestAnimationFrame(() => {
+    jokeElement.classList.add('visible');
+  });
+
+  setTimeout(() => {
+    jokeElement.classList.remove('visible');
+  }, 6000);
+
+  setTimeout(() => {
+    container.removeChild(jokeElement);
+    index = (index + 1) % jokes.length;
+    showNextJoke();
+  }, 7500);
+}
+
+showNextJoke();
+</script>
+
+</body>
+</html>
