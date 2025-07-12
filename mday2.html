@@ -110,14 +110,14 @@ function showNextJoke() {
     // Fade out after 6 seconds
     setTimeout(() => {
         jokeElement.classList.remove('visible');
-    }, 6000);
+    }, 8000);
 
-    // After 7.5 seconds (6s display + 1.5s fade), remove and show next
+    // After 9.5 seconds (8s display + 1.5s fade), remove and show next
     setTimeout(() => {
         container.removeChild(jokeElement);
         index = (index + 1) % jokes.length;
         showNextJoke();
-    }, 7500);
+    }, 9500);
 }
 
 // Start the first joke
