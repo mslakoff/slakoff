@@ -11,7 +11,7 @@
 
 <style>
   body {
-    background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+    background: linear-gradient(135deg, #1E3A8A, #1E40AF);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -57,6 +57,7 @@ const jokes = [
   "Today is Marc's birthday so don't fuck with him!",
   "They say 65 is the new 45, but Marc says that 65 is the appropriate amount of minutes to take a nap.",
   "When you hit 65, “Rock ‘n Roll” no longer describes your music, but your chair options",
+   { type: 'image', src: 'catnhat.jpg' },
   "You know you’re turning 65 when you start ordering drive-up food at a mailbox.",
    { type: 'image', src: 'celsius.png' },
   "There once was a Marc who turned 65,\nHis bassoon kept the parties alive,\nWith a wheeze and a puff,\nHe'd play fancy stuff,\nAnd dance with a reed, high-five!",
@@ -67,6 +68,8 @@ const jokes = [
   { type: 'image', src: 'ahole.png' },
   "Limerick: There once was a Marc quite spry,\nWho played bassoon under the sky,\nAt 65 he would play,\nAnd shout 'Hip Hooray!',\nWhile eating his birthday pie!",
   "At 65, “getting down” on your birthday means not necessarily getting back up.",
+  "The first 65 years of childhood are always the hardest"
+   { type: 'image', src: 'shit.jpg' },
   "At 65 your body is still a temple, but the steeples are pointing downward.",
    { type: 'image', src: 'recount.png' },
   "At 65, 'getting lucky' means finding your cell phone in your dirty laundry.",
@@ -84,7 +87,6 @@ const jokes = [
   "How do you get two bassoonists to play in tune? -- shoot one.",
   "The sad thing about turning 65 - the candles cost more than the cake",
    { type: 'image', src: 'party.png' },
-
   "You know you're getting old when you stoop to tie your shoelaces\nand wonder what else you could do while you’re down there."
 ];
 
@@ -116,14 +118,14 @@ function showNextJoke() {
     // Fade out after 6 seconds
     setTimeout(() => {
         jokeElement.classList.remove('visible');
-    }, 8000);
+    }, 10000);
 
-    // After 9.5 seconds (8s display + 1.5s fade), remove and show next
+    // After 11.5 seconds (10s display + 1.5s fade), remove and show next
     setTimeout(() => {
         container.removeChild(jokeElement);
         index = (index + 1) % jokes.length;
         showNextJoke();
-    }, 9500);
+    }, 10500);
 }
 
 // Start the first joke
