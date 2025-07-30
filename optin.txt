@@ -1,0 +1,38 @@
+**Opt-In and Messaging Policy for Toll-Free Number**
+
+**Phone Number Owner**: Mark Slakoff
+**Twilio Number**: \[Insert toll-free number]
+**Use Case**: Low-volume, personal-use text alerts
+**Message Type**: Forwarded email notifications and personal message alerts
+
+**1. Opt-In Process**
+This number is used for personal and private messaging only. There is no public opt-in form or marketing campaign.
+
+Opt-in occurs through direct personal interaction:
+
+* The owner initiates communication by forwarding an email to this number or sending a message directly.
+* Any individuals who reply to messages do so knowingly, having received a personal message from the number owner.
+* In some cases, the number owner initiates a conversation with known contacts who respond affirmatively by text.
+
+**2. Consent and Disclosures**
+
+* Contacts are informed verbally or by message that they may receive alerts from this number.
+* They are told they may reply directly or request that messages stop at any time.
+* A formal Terms of Service or Privacy Policy is not published due to the non-commercial, personal nature of use.
+
+**3. Opt-Out Process**
+
+* Recipients can opt out at any time by texting “STOP” or similar.
+* The number owner manually stops sending messages and honors all opt-out requests immediately.
+* No further messages are sent to opted-out contacts unless they reinitiate contact or explicitly opt back in.
+
+**4. Record-Keeping**
+
+* Message history is retained in Twilio logs and personal device SMS threads.
+* These records serve as documentation of opt-in and opt-out activity if required.
+
+**5. Message Content and Frequency**
+
+* Messages typically contain personal alerts or email notifications.
+* Message frequency is low (generally under 10 messages per day).
+* No marketing, mass messaging, or unsolicited communication is performed using this number.
