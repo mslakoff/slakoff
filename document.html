@@ -5,23 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>document</title>
     <style>
-        /* This section ensures the document fills the entire browser window without gaps */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
-            background-color: #ffffff;
-            overflow: hidden; /* Removes the double scrollbar from the edge */
+            background-color: #f0f0f0; /* Light grey background to make the doc pop */
+            display: flex;
+            justify-content: center; /* Centers horizontally */
         }
 
-        /* This creates the container that holds your Google Doc */
         .doc-wrapper {
             width: 100%;
-            height: 100vh; /* Fills 100% of the Viewport Height */
+            max-width: 850px; /* Standard "Page" width */
+            height: 100vh;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1); /* Optional: Adds a subtle shadow */
         }
 
-        /* This styles the iframe itself to be seamless */
         iframe {
             width: 100%;
             height: 100%;
