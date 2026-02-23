@@ -3,97 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minimalist Scroll</title>
+    <title>Seamless Minimalist Scroll</title>
     <style>
-        /* 1. Fill the screen and center content */
         body, html {
             margin: 0;
             padding: 0;
             height: 100%;
             width: 100%;
             display: flex;
-            align-items: center; /* Vertical Center */
-            background-color: #ffffff; /* Pure White */
+            align-items: center;
+            background-color: #ffffff;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            overflow: hidden; /* Prevent scrollbars */
-        }
-
-        /* 2. The Text Container */
-        .scroll-container {
-            width: 100%;
-            white-space: nowrap;
             overflow: hidden;
         }
 
-        /* 3. The Modern Large Font */
-        #banner-text {
-            display: inline-block;
-            font-size: 80px; /* Large and bold */
-            font-weight: 700; /* Modern heavy weight */
-            color: #000000; /* Pure Black */
-            padding-left: 100%; /* Start off-screen */
-            animation: infinite-scroll 25s linear infinite;
+        /* The window we look through */
+        .ticker-viewport {
+            width: 100%;
+            overflow: hidden;
+            white-space: nowrap;
+            display: flex;
         }
 
-        /* 4. The Animation */
-        @keyframes infinite-scroll {
+        /* The moving train of text */
+        .ticker-move {
+            display: inline-block;
+            white-space: nowrap;
+            animation: move-left 30s linear infinite; /* Adjusted for large font */
+        }
+
+        .ticker-item {
+            display: inline-block;
+            font-size: 80px;
+            font-weight: 700;
+            color: #000000;
+            /* This controls the gap between messages */
+            padding-right: 300px; 
+        }
+
+        @keyframes move-left {
             0% { transform: translateX(0); }
-            100% { transform: translateX(-200%); }
+            100% { transform: translateX(-50%); }
         }
     </style>
 </head>
 <body>
 
-    <div class="scroll-container">
-        <div id="banner-text">Loading...</div>
+    <div class="ticker-viewport">
+        <div class="ticker-move" id="ticker-mover">
+            <span id="content-a">Loading messages...</span>
+            <span id="content-b"></span>
+        </div>
     </div>
 
     <script>
-        // Your specific Google Sheet CSV URL
         const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVV3dYqhWq7-sR2FLBP5WYDDKBu8gIGmpFP-xuPQzdK6dWVMXmIeCrt3QbGvA0NJ-9SJVPnO_4P9Tf/pub?output=csv&cachebust=' + Date.now();
-        
-        let messages = [];
-        let currentIndex = 0;
 
-        async function fetchMessages() {
+        async function fetchAndBuild() {
             try {
                 const response = await fetch(SHEET_URL);
                 const data = await response.text();
-                
-                // Parse rows and clean up quotes/whitespace
                 const rows = data.split(/\r?\n/);
-                const newMessages = rows.slice(1) 
-                                        .map(row => row.replace(/^"|"$/g, '').trim())
-                                        .filter(msg => msg.length > 0);
                 
-                if (newMessages.length > 0) {
-                    messages = newMessages;
-                    // Start immediately if it's the first load
-                    if (document.getElementById('banner-text').innerText === "Loading...") {
-                        showNextMessage();
-                    }
+                // Get all valid messages
+                const messages = rows.slice(1)
+                                     .map(row => row.replace(/^"|"$/g, '').trim())
+                                     .filter(msg => msg.length > 0);
+
+                if (messages.length > 0) {
+                    // Build a string of HTML items
+                    const itemsHtml = messages.map(msg => `<span class="ticker-item">${msg}</span>`).join('');
+                    
+                    // We put the same list twice. 
+                    // When the first list finishes, the second list is right behind it.
+                    document.getElementById('content-a').innerHTML = itemsHtml;
+                    document.getElementById('content-b').innerHTML = itemsHtml;
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
             }
         }
 
-        function showNextMessage() {
-            if (messages.length === 0) return;
-            const bannerElement = document.getElementById('banner-text');
-            bannerElement.innerText = messages[currentIndex];
-            currentIndex = (currentIndex + 1) % messages.length;
-        }
-
-        // Cycle to next message once the current one disappears
-        const banner = document.getElementById('banner-text');
-        banner.addEventListener('animationiteration', () => {
-            showNextMessage();
-        });
-
-        fetchMessages();
-        // Refresh the feed from the sheet every 60 seconds
-        setInterval(fetchMessages, 60000);
+        fetchAndBuild();
+        // Check for new messages every minute
+        setInterval(fetchAndBuild, 60000);
     </script>
 </body>
 </html>
