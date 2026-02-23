@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Banner</title>
+    <style>
+        body { margin: 0; overflow: hidden; font-family: sans-serif; }
+        
+        /* The Container */
+        .ticker-wrap {
+            width: 100%;
+            background: #333;
+            color: #fff;
+            padding: 15px 0;
+            overflow: hidden;
+        }
+
+        /* The Scrolling Text */
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 15s linear infinite;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(100%, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ticker-wrap">
+        <div class="ticker" id="banner-text">Loading message...</div>
+    </div>
+
+    <script>
+        // PASTE YOUR PUBLISHED CSV URL HERE
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVV3dYqhWq7-sR2FLBP5WYDDKBu8gIGmpFP-xuPQzdK6dWVMXmIeCrt3QbGvA0NJ-9SJVPnO_4P9Tf/pub?output=csv';
+
+        async function updateBanner() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const data = await response.text();
+                
+                // CSV parsing: Split by new line and take the second row (A2)
+                const rows = data.split('\n');
+                if (rows.length > 1) {
+                    const message = rows[1].trim();
+                    document.getElementById('banner-text').innerText = message;
+                }
+            } catch (error) {
+                console.error("Error fetching sheet:", error);
+            }
+        }
+
+        // Fetch immediately on load
+        updateBanner();
+        // Refresh the text every 60 seconds so you don't have to reload the page
+        setInterval(updateBanner, 60000);
+    </script>
+</body>
+</html>
