@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>document</title>
+    <style>
+        /* This section ensures the document fills the entire browser window without gaps */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            background-color: #ffffff;
+            overflow: hidden; /* Removes the double scrollbar from the edge */
+        }
+
+        /* This creates the container that holds your Google Doc */
+        .doc-wrapper {
+            width: 100%;
+            height: 100vh; /* Fills 100% of the Viewport Height */
+        }
+
+        /* This styles the iframe itself to be seamless */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="doc-wrapper">
+        <iframe src="https://docs.google.com/document/d/e/2PACX-1vR6DsYloPEu4LWIPf25TL8_PGt6gOeJiR5BmJEzgu59zGg9mGbj1w3bw4x19AGKscn0yl7O-1EA4zMZ/pub?embedded=true"></iframe>
+    </div>
+
+</body>
+</html>

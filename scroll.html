@@ -17,7 +17,6 @@
             overflow: hidden;
         }
 
-        /* The window we look through */
         .ticker-viewport {
             width: 100%;
             overflow: hidden;
@@ -25,11 +24,10 @@
             display: flex;
         }
 
-        /* The moving train of text */
         .ticker-move {
             display: inline-block;
             white-space: nowrap;
-            animation: move-left 30s linear infinite; /* Adjusted for large font */
+            /* Animation removed from here to be triggered by JS */
         }
 
         .ticker-item {
@@ -37,7 +35,6 @@
             font-size: 80px;
             font-weight: 700;
             color: #000000;
-            /* This controls the gap between messages */
             padding-right: 300px; 
         }
 
@@ -65,27 +62,29 @@
                 const data = await response.text();
                 const rows = data.split(/\r?\n/);
                 
-                // Get all valid messages
                 const messages = rows.slice(1)
                                      .map(row => row.replace(/^"|"$/g, '').trim())
                                      .filter(msg => msg.length > 0);
 
                 if (messages.length > 0) {
-                    // Build a string of HTML items
                     const itemsHtml = messages.map(msg => `<span class="ticker-item">${msg}</span>`).join('');
                     
-                    // We put the same list twice. 
-                    // When the first list finishes, the second list is right behind it.
+                    const mover = document.getElementById('ticker-mover');
                     document.getElementById('content-a').innerHTML = itemsHtml;
                     document.getElementById('content-b').innerHTML = itemsHtml;
+
+                    // TRIGGER ANIMATION HERE:
+                    // We apply the animation style only after the content exists.
+                    mover.style.animation = "move-left 30s linear infinite";
                 }
             } catch (error) {
                 console.error("Fetch error:", error);
+                document.getElementById('content-a').innerText = "Error loading feed.";
             }
         }
 
         fetchAndBuild();
-        // Check for new messages every minute
+        // Check for updates every minute
         setInterval(fetchAndBuild, 60000);
     </script>
 </body>
