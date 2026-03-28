@@ -1,141 +1,142 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Scrolling Banner</title>
-    <style>
-        /* 1. Base Styles */
-        body { 
-            margin: 0; 
-            padding: 0; 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f0f0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seamless Minimalist Scroll</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+    }
 
-        /* 2. The Container */
-        .ticker-container {
-            position: fixed;
-            bottom: 0; /* Positioned at bottom like a news reel */
-            width: 100%;
-            background: #1a1a1a;
-            color: #ffffff;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.3);
-        }
+    .ticker-viewport {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+    }
 
-        /* 3. The Stationary Label (The "Admin" Title) */
-        .ticker-label {
-            background: #e63946; /* Professional Red */
-            padding: 0 20px;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            font-weight: bold;
-            z-index: 2;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            font-size: 14px;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.5);
-        }
+    .ticker-move {
+      display: inline-flex;
+      white-space: nowrap;
+      will-change: transform;
+    }
 
-        /* 4. The Scrolling Wrapper */
-        .ticker-wrapper {
-            flex: 1;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-        }
+    .ticker-content {
+      display: inline-flex;
+      white-space: nowrap;
+    }
 
-        /* 5. The Actual Moving Text */
-        #banner-text {
-            display: inline-block;
-            white-space: nowrap;
-            padding-left: 100%; /* Start off-screen to the right */
-            font-size: 18px;
-            font-weight: 400;
-            animation: ticker-move 15s linear infinite;
-        }
+    .ticker-item {
+      display: inline-block;
+      font-size: 80px;
+      font-weight: 700;
+      color: #000000;
+      padding-right: 300px;
+      flex: 0 0 auto;
+    }
 
-        @keyframes ticker-move {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-200%, 0, 0); }
-        }
-
-        /* Pause on hover so people can read a long message */
-        .ticker-wrapper:hover #banner-text {
-            animation-play-state: paused;
-            cursor: pointer;
-        }
-    </style>
+    @keyframes move-left {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-50%);
+      }
+    }
+  </style>
 </head>
 <body>
-
-    <div class="ticker-container">
-        <div class="ticker-label">Live Updates</div>
-        <div class="ticker-wrapper">
-            <div id="banner-text">Initialising feed...</div>
-        </div>
+  <div class="ticker-viewport">
+    <div class="ticker-move" id="ticker-mover">
+      <div class="ticker-content" id="content-a">
+        <span class="ticker-item">Loading messages...</span>
+      </div>
+      <div class="ticker-content" id="content-b"></div>
     </div>
+  </div>
 
-    <script>
-        // Your specific Google Sheet CSV URL
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRVV3dYqhWq7-sR2FLBP5WYDDKBu8gIGmpFP-xuPQzdK6dWVMXmIeCrt3QbGvA0NJ-9SJVPnO_4P9Tf/pub?output=csv&cachebust=' + Date.now();
-        
-        let messages = [];
-        let currentIndex = 0;
+  <script>
+    const SHEET_URL =
+      "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVV3dYqhWq7-sR2FLBP5WYDDKBu8gIGmpFP-xuPQzdK6dWVMXmIeCrt3QbGvA0NJ-9SJVPnO_4P9Tf/pub?output=csv";
 
-        async function fetchMessages() {
-            try {
-                console.log("Checking Google Sheets for updates...");
-                const response = await fetch(SHEET_URL);
-                const data = await response.text();
-                
-                // Parse CSV: Split by line, remove header (row 1), clean whitespace
-                const rows = data.split(/\r?\n/);
-                const newMessages = rows.slice(1) 
-                                        .map(row => row.split(',')[0].trim()) // Gets first column
-                                        .filter(msg => msg.length > 0);
-                
-                if (newMessages.length > 0) {
-                    messages = newMessages;
-                    // If it's the first run, start the show
-                    if (document.getElementById('banner-text').innerText === "Initialising feed...") {
-                        showNextMessage();
-                    }
-                }
-            } catch (error) {
-                console.error("Connection error:", error);
-                document.getElementById('banner-text').innerText = "Temporary connection issue. Retrying...";
-            }
+    function parseSingleColumnCSV(text) {
+      const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+      return lines
+        .slice(1)
+        .map(line => {
+          let value = line.trim();
+          if (value.startsWith('"') && value.endsWith('"')) {
+            value = value.slice(1, -1).replace(/""/g, '"');
+          }
+          return value.trim();
+        })
+        .filter(Boolean);
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement("div");
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    function buildTickerHTML(messages) {
+      return messages
+        .map(msg => `<span class="ticker-item">${escapeHtml(msg)}</span>`)
+        .join("");
+    }
+
+    function restartAnimation(pixelsPerSecond = 120) {
+      const mover = document.getElementById("ticker-mover");
+      const content = document.getElementById("content-a");
+
+      const width = content.offsetWidth;
+      const duration = width / pixelsPerSecond;
+
+      mover.style.animation = "none";
+      void mover.offsetWidth;
+      mover.style.animation = `move-left ${duration}s linear infinite`;
+    }
+
+    async function fetchAndBuild() {
+      try {
+        const response = await fetch(`${SHEET_URL}&cachebust=${Date.now()}`);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const csvText = await response.text();
+        const messages = parseSingleColumnCSV(csvText);
+
+        const contentA = document.getElementById("content-a");
+        const contentB = document.getElementById("content-b");
+
+        if (messages.length === 0) {
+          contentA.innerHTML = `<span class="ticker-item">No messages available</span>`;
+          contentB.innerHTML = contentA.innerHTML;
+        } else {
+          const itemsHtml = buildTickerHTML(messages);
+          contentA.innerHTML = itemsHtml;
+          contentB.innerHTML = itemsHtml;
         }
 
-        function showNextMessage() {
-            if (messages.length === 0) return;
+        restartAnimation(120);
+      } catch (error) {
+        console.error("Fetch error:", error);
+        const errorHtml = `<span class="ticker-item">Error loading feed.</span>`;
+        document.getElementById("content-a").innerHTML = errorHtml;
+        document.getElementById("content-b").innerHTML = errorHtml;
+        restartAnimation(120);
+      }
+    }
 
-            const bannerElement = document.getElementById('banner-text');
-            
-            // Set the text to the current message in the list
-            bannerElement.innerText = messages[currentIndex];
-
-            // Increment index for next time (loops back to 0 at the end)
-            currentIndex = (currentIndex + 1) % messages.length;
-        }
-
-        // SWAP MESSAGE every time the animation finishes one full loop
-        const banner = document.getElementById('banner-text');
-        banner.addEventListener('animationiteration', () => {
-            showNextMessage();
-        });
-
-        // 1. Fetch immediately
-        fetchMessages();
-        
-        // 2. Re-check the Google Sheet every 60 seconds for admin changes
-        setInterval(fetchMessages, 60000);
-    </script>
+    fetchAndBuild();
+    setInterval(fetchAndBuild, 60000);
+  </script>
 </body>
 </html>
