@@ -21,17 +21,22 @@
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
+      position: relative;
     }
 
     .ticker-move {
       display: inline-flex;
       white-space: nowrap;
+      width: max-content;
+      transform: translate3d(0, 0, 0);
+      backface-visibility: hidden;
       will-change: transform;
     }
 
     .ticker-content {
       display: inline-flex;
       white-space: nowrap;
+      flex: 0 0 auto;
     }
 
     .ticker-item {
@@ -41,15 +46,6 @@
       color: #000000;
       padding-right: 300px;
       flex: 0 0 auto;
-    }
-
-    @keyframes move-left {
-      from {
-        transform: translateX(0);
-      }
-      to {
-        transform: translateX(-50%);
-      }
     }
   </style>
 </head>
@@ -67,18 +63,52 @@
     const SHEET_URL =
       "https://docs.google.com/spreadsheets/d/e/2PACX-1vRVV3dYqhWq7-sR2FLBP5WYDDKBu8gIGmpFP-xuPQzdK6dWVMXmIeCrt3QbGvA0NJ-9SJVPnO_4P9Tf/pub?output=csv";
 
-    function parseSingleColumnCSV(text) {
-      const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
-      return lines
-        .slice(1)
-        .map(line => {
-          let value = line.trim();
-          if (value.startsWith('"') && value.endsWith('"')) {
-            value = value.slice(1, -1).replace(/""/g, '"');
+    function parseCSV(text) {
+      const rows = [];
+      let row = [];
+      let cell = "";
+      let inQuotes = false;
+
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        const nextChar = text[i + 1];
+
+        if (char === '"') {
+          if (inQuotes && nextChar === '"') {
+            cell += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
           }
-          return value.trim();
-        })
-        .filter(Boolean);
+        } else if (char === ',' && !inQuotes) {
+          row.push(cell);
+          cell = "";
+        } else if ((char === '\n' || char === '\r') && !inQuotes) {
+          if (char === '\r' && nextChar === '\n') {
+            i++;
+          }
+          row.push(cell);
+          rows.push(row);
+          row = [];
+          cell = "";
+        } else {
+          cell += char;
+        }
+      }
+
+      row.push(cell);
+      rows.push(row);
+
+      return rows;
+    }
+
+    function parseSingleColumnCSV(text) {
+      const rows = parseCSV(text);
+
+      return rows
+        .slice(1)
+        .map(row => (row[0] || "").trim())
+        .filter(value => value !== "");
     }
 
     function escapeHtml(str) {
@@ -93,16 +123,30 @@
         .join("");
     }
 
-    function restartAnimation(pixelsPerSecond = 70) {
+    function restartAnimation(pixelsPerSecond = 120) {
       const mover = document.getElementById("ticker-mover");
-      const content = document.getElementById("content-a");
-
-      const width = content.offsetWidth;
+      const contentA = document.getElementById("content-a");
+      const width = contentA.offsetWidth;
       const duration = width / pixelsPerSecond;
+
+      const oldStyle = document.getElementById("ticker-keyframes");
+      if (oldStyle) oldStyle.remove();
+
+      const style = document.createElement("style");
+      style.id = "ticker-keyframes";
+      style.textContent = `
+        @keyframes move-left {
+          from { transform: translate3d(0, 0, 0); }
+          to { transform: translate3d(-${width}px, 0, 0); }
+        }
+      `;
+      document.head.appendChild(style);
 
       mover.style.animation = "none";
       void mover.offsetWidth;
       mover.style.animation = `move-left ${duration}s linear infinite`;
+
+      console.log("Ticker width:", width, "Duration:", duration, "seconds");
     }
 
     async function fetchAndBuild() {
@@ -113,12 +157,15 @@
         const csvText = await response.text();
         const messages = parseSingleColumnCSV(csvText);
 
+        console.log("Messages loaded:", messages.length, messages);
+
         const contentA = document.getElementById("content-a");
         const contentB = document.getElementById("content-b");
 
         if (messages.length === 0) {
-          contentA.innerHTML = `<span class="ticker-item">No messages available</span>`;
-          contentB.innerHTML = contentA.innerHTML;
+          const fallback = `<span class="ticker-item">No messages available</span>`;
+          contentA.innerHTML = fallback;
+          contentB.innerHTML = fallback;
         } else {
           const itemsHtml = buildTickerHTML(messages);
           contentA.innerHTML = itemsHtml;
@@ -136,7 +183,13 @@
     }
 
     fetchAndBuild();
-    setInterval(fetchAndBuild, 60000);
+
+    // Refresh every 10 minutes instead of every 60 seconds
+    setInterval(fetchAndBuild, 600000);
+
+    window.addEventListener("resize", () => {
+      restartAnimation(120);
+    });
   </script>
 </body>
 </html>
